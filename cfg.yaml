@@ -1,0 +1,19 @@
+nodes:
+  customers: 1
+  vcenter: 2
+  systems: 2 #total count of systems for this customer
+  volumes: 2 #total count of volumes for all the systems
+  snapshots: 2 #total count of snapshots for all the volumes
+  clones: 2 #total count of clones for all snapshots
+
+edges:
+  customers:
+    - systems #systems are associated entity of customers
+    - vcenter #vcenter is also associated to entity of customer
+  systems: 
+    - volumes #volumes are associated entity for systems
+  volumes: 
+    - snapshots #snapshots are associated entity for volumes
+  snapshots: 
+    - clones #clones are associated entity for snapshots
+  

@@ -125,7 +125,25 @@ def generatedata(child,parent):
        
                    
         print(f"associations are {associations}")
- 
+
+#to associate entities with properties
+def associateproperties(associations):
+    associations['properties'] = {}
+    entities = list(associations.keys())
+    print(f"entities are {entities}")
+    """
+    entities are dict_keys(['customers0', 'systems0-0', 'systems1-0', 'volumes0-0-0', 'volumes1-0-0', 'volumes0-1-0', 'volumes1-1-0', 'snapshots0-0-0-0', 'snapshots1-0-0-0', 'snapshots0-1-0-0', 'snapshots1-1-0-0', 'snapshots0-0-1-0', 'snapshots1-0-1-0', 'snapshots0-1-1-0', 'snapshots1-1-1-0']
+    """
+    entities_with_properties = list(data['properties'].keys())
+    print(f"entities which have properties are {entities_with_properties}")
+    for item in entities:
+        sub_item = ''.join(char for char in item if char.isalpha())
+        if sub_item in entities_with_properties:
+            new_key = item
+            new_value = data['properties'][sub_item]
+            associations['properties'][new_key] = new_value
+    
+    print(associations)
 for parent,child in data['edges'].items():
     print(f"parent and child are {parent},{child}")
     parent_list = []

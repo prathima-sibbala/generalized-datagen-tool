@@ -17,3 +17,8 @@ edges:
   snapshots: 
     - clones #clones are associated entity for snapshots
   
+properties:
+  system-capacity:
+    - systems
+  volume-io:
+    - volumes

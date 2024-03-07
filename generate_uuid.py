@@ -1,4 +1,4 @@
-import yaml, uuid
+import yaml, uuid, pdb
 """
 nodes:
   customers: 1
@@ -189,13 +189,12 @@ def generatedata(child,parent):
                     
         #print(f"associations are {associations}")
 
+
 def associateproperties(associations):
     associations['properties'] = {}
     entities = list(associations.keys())
     print(f"entities are {entities}")
-    """
-    entities are dict_keys(['customers0', 'systems0-0', 'systems1-0', 'volumes0-0-0', 'volumes1-0-0', 'volumes0-1-0', 'volumes1-1-0', 'snapshots0-0-0-0', 'snapshots1-0-0-0', 'snapshots0-1-0-0', 'snapshots1-1-0-0', 'snapshots0-0-1-0', 'snapshots1-0-1-0', 'snapshots0-1-1-0', 'snapshots1-1-1-0']
-    """
+    #entities are dict_keys(['customers0', 'systems0-0', 'systems1-0', 'volumes0-0-0', 'volumes1-0-0', 'volumes0-1-0', 'volumes1-1-0', 'snapshots0-0-0-0', 'snapshots1-0-0-0', 'snapshots0-1-0-0', 'snapshots1-1-0-0', 'snapshots0-0-1-0', 'snapshots1-0-1-0', 'snapshots0-1-1-0', 'snapshots1-1-1-0']
     entities_with_properties = list(data['properties'].keys())
     print(f"entities which have properties are {entities_with_properties}")
     for item in entities:
@@ -206,7 +205,39 @@ def associateproperties(associations):
             associations['properties'][new_key] = new_value
     
     print(associations)
-    
+
+"""
+if you want to create cfg for properties as below:
+properties:
+  system-capacity:
+    - systems0-0
+  volume-io:
+    - volumes0-0-0
+
+def associateproperties(associations):
+    associations['properties'] = {}
+    entities = list(associations.keys())
+    pdb.set_trace()
+    entities_with_properties = list(data['properties'].values())
+    flatlist_entity_prop = [item for sublist in entities_with_properties for item in sublist]
+    print(f"entities with properties are {entities_with_properties}")
+    new_value_system = []
+    new_value_volumeio = []
+    for item in entities:
+        print(f"item is {item}")
+        if item in flatlist_entity_prop:
+            if 'system' in item:
+                new_key = "system-capacity"
+                new_value_system.append(item)
+                associations['properties'][new_key] = new_value_system
+            elif 'volume' in item:
+                new_key = "volume-io"
+                new_value_volumeio.append(item)
+                associations['properties'][new_key] = new_value_volumeio
+    print(associations)
+
+"""
+
 
 
  
@@ -238,17 +269,67 @@ for parent,child in data['edges'].items():
         generatedata(child,parent_list)
         associateproperties(associations)
 
+"""
+
 properties = associations.pop('properties')
 relationships = associations
 
 relationships_yaml = yaml.dump(relationships, default_flow_style=False)
 properties_yaml = yaml.dump(properties, default_flow_style=False)
 
-relationships_heading = "Relationships"
+relationships_heading = "Relations"
 properties_heading = "properties"
 combined_yaml = f"{relationships_heading}\n{relationships_yaml}\n{properties_heading}\n{properties_yaml}"
 # Concatenate the YAML strings
-#combined_yaml = relationships_yaml + properties_yaml
+combined_yaml = relationships_yaml + properties_yaml
 
 # Print the combined YAML output
-print(combined_yaml)
+with open('output.yaml','w') as file:
+    op_data = yaml.safe_load(combined_yaml)
+    yaml.dump(op_data,file,default_flow_style=False)
+
+print(op_data)
+
+
+properties = associations.pop('properties')
+relations = associations
+
+relations_yaml = yaml.dump(relations, default_flow_style=False)
+properties_yaml = yaml.dump(properties, default_flow_style=False)
+
+relations_heading = "Relations"
+properties_heading = "properties"
+combined_yaml = f"{relations_heading}\n{relations_yaml}\n{properties_heading}\n{properties_yaml}"
+# Concatenate the YAML strings
+combined_yaml = relations_yaml + properties_yaml
+
+with open('output.yaml','w') as file:
+    op_data = yaml.safe_load(combined_yaml)
+    yaml.dump(op_data,file,default_flow_style=False)
+
+yaml_output = yaml.dump(associations, default_flow_style=False)
+print(yaml_output)
+
+"""
+
+properties = associations.pop('properties')
+print(f"properties are {properties}")
+relations = associations
+print(f"relations between entities are {relations}")
+relation_dict = dict()
+properties_dict = dict()
+relations_yaml = yaml.dump(relations, default_flow_style=False)
+properties_yaml = yaml.dump(properties, default_flow_style=False)
+relationships_heading = "Relations"
+properties_heading = "Properties"
+read_relations_yaml = yaml.safe_load(relations_yaml)
+read_properties_yaml = yaml.safe_load(properties_yaml)
+relation_dict[relationships_heading] = read_relations_yaml
+properties_dict[properties_heading] = read_properties_yaml
+relationship = yaml.dump(relation_dict, default_flow_style=False)
+properties = yaml.dump(properties_dict, default_flow_style=False)
+combined_yaml = relationship + properties
+
+with open('output.yaml','w') as file:
+    op_data = yaml.safe_load(combined_yaml)
+    yaml.dump(op_data,file, default_flow_style=False,sort_keys=False)

@@ -1,0 +1,36 @@
+nodes:
+  root_node: 1 #this should be always as 1 and name should be always as root_node
+  customers: 2 #total count of customers
+  vcenter: 2
+  systems: 2 #total count of systems for this customer
+  volumes: 2 #total count of volumes for all the systems
+  snapshots: 2 #total count of snapshots for all the volumes
+  clones: 2 #total count of clones for all snapshots
+
+edges:
+  root_node:
+    - customers
+  customers:
+    - systems #systems are associated entity of customers
+    - vcenter #vcenter is also associated to entity of customer
+  systems: 
+    - volumes #volumes are associated entity for systems
+  volumes: 
+    - snapshots #snapshots are associated entity for volumes
+  snapshots: 
+    - clones #clones are associated entity for snapshots
+
+
+#properties:
+  #systems:
+  #  - system-capacity
+  #volumes:
+  #  - volume-io
+
+
+properties:
+  system-capacity:
+    - systems0-0 #system0 of customer0
+    - systems0-1 #system0 of customer1
+  volume-io:
+    - volumes0-0-0 #volume0 of system0 of customer0
